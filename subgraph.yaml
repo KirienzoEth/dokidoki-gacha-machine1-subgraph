@@ -1,0 +1,44 @@
+specVersion: 0.0.1
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: GameMachine
+    network: mainnet
+    source:
+      address: "0x89fd25dc5ea7a7f9a05c429a636831cb48d91f4c"
+      abi: GameMachine
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.2
+      language: wasm/assemblyscript
+      entities:
+        - AddCardMinted
+        - AddCardNotMinted
+        - ChangePlayOncePrice
+        - LockMachine
+        - OwnershipTransferred
+        - RemoveCard
+        - RunMachineSuccessfully
+        - ShuffleCount
+      abis:
+        - name: GameMachine
+          file: ./abis/GameMachine.json
+      eventHandlers:
+        - event: AddCardMinted(uint256,uint256,uint256)
+          handler: handleAddCardMinted
+        - event: AddCardNotMinted(uint256,uint256,uint256)
+          handler: handleAddCardNotMinted
+        - event: ChangePlayOncePrice(uint256)
+          handler: handleChangePlayOncePrice
+        - event: LockMachine(bool)
+          handler: handleLockMachine
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: RemoveCard(uint256,uint256,uint256)
+          handler: handleRemoveCard
+        - event: RunMachineSuccessfully(address,uint256)
+          handler: handleRunMachineSuccessfully
+        - event: ShuffleCount(uint256)
+          handler: handleShuffleCount
+      file: ./src/mapping.ts
