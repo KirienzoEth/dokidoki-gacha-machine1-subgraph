@@ -1,4 +1,3 @@
-import { BigInt } from "@graphprotocol/graph-ts"
 import {
   GameMachine,
   AddCardMinted,
@@ -7,34 +6,34 @@ import {
   LockMachine,
   OwnershipTransferred,
   RemoveCard,
-  RunMachineSuccessfully,
+  RunMachineSuccessfully as RunMachineSuccessfullyEvent,
   ShuffleCount
 } from "../generated/GameMachine/GameMachine"
-import { ExampleEntity } from "../generated/schema"
+import { RunMachineSuccessfully, Transfer } from "../generated/schema"
 
 export function handleAddCardMinted(event: AddCardMinted): void {
   // Entities can be loaded from the store using a string ID; this ID
   // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(event.transaction.from.toHex())
+  // let entity = ExampleEntity.load(event.transaction.from.toHex())
 
   // Entities only exist after they have been saved to the store;
   // `null` checks allow to create entities on demand
-  if (entity == null) {
-    entity = new ExampleEntity(event.transaction.from.toHex())
+  // if (entity == null) {
+  //   entity = new ExampleEntity(event.transaction.from.toHex())
 
     // Entity fields can be set using simple assignments
-    entity.count = BigInt.fromI32(0)
-  }
+  //   entity.count = BigInt.fromI32(0)
+  // }
 
   // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
+  // entity.count = entity.count + BigInt.fromI32(1)
 
   // Entity fields can be set based on event parameters
-  entity.cardId = event.params.cardId
-  entity.amount = event.params.amount
+  // entity.cardId = event.params.cardId
+  // entity.amount = event.params.amount
 
   // Entities can be written to the store with `.save()`
-  entity.save()
+  // entity.save()
 
   // Note: If a handler doesn't require existing field values, it is faster
   // _not_ to load the entity from the store. Instead, create it fresh with
@@ -88,7 +87,21 @@ export function handleOwnershipTransferred(event: OwnershipTransferred): void {}
 export function handleRemoveCard(event: RemoveCard): void {}
 
 export function handleRunMachineSuccessfully(
-  event: RunMachineSuccessfully
-): void {}
+  event: RunMachineSuccessfullyEvent
+): void {
+  // Not working yet, waiting for full geth node to finish syncing
+  // let gameMachine = GameMachine.bind(event.address)
+
+  let run = new RunMachineSuccessfully(event.transaction.hash.toHex() + '-' + event.logIndex.toString())
+  run.blockNumber = event.block.number
+  run.timestamp = event.block.timestamp
+  run.times = event.params.times
+  run.player = event.params.account
+
+  // run.priceOnRun = gameMachine.playOncePrice()
+  // run.amountSpent = gameMachine.playOncePrice().times(run.times)
+    
+  run.save();
+}
 
 export function handleShuffleCount(event: ShuffleCount): void {}

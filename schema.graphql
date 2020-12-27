@@ -1,6 +1,9 @@
-type ExampleEntity @entity {
-  id: ID!
-  count: BigInt!
-  cardId: BigInt! # uint256
-  amount: BigInt! # uint256
+type RunMachineSuccessfully @entity {
+  id: ID! # txn hash
+  blockNumber: BigInt!
+  timestamp: BigInt!
+  times: BigInt!
+  player: Bytes!
+  priceOnRun: BigInt
+  amountSpent: BigInt
 }

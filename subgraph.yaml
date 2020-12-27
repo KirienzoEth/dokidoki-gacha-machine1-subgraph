@@ -1,4 +1,6 @@
 specVersion: 0.0.2
+description: DokiDoki Degacha machine 1
+repository: https://github.com/KirienzoEth/dokidoki-gacha-machine1-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
@@ -8,6 +10,7 @@ dataSources:
     source:
       address: "0x89fd25dc5ea7a7f9a05c429a636831cb48d91f4c"
       abi: GameMachine
+      startBlock: 11452188
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4

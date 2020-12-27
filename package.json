@@ -4,10 +4,10 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ KirienzoEth/dokidoki-degacha-machine1-subgraph",
-    "create-local": "graph create --node http://localhost:8020/ KirienzoEth/dokidoki-degacha-machine1-subgraph",
-    "remove-local": "graph remove --node http://localhost:8020/ KirienzoEth/dokidoki-degacha-machine1-subgraph",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 KirienzoEth/dokidoki-degacha-machine1-subgraph"
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ KirienzoEth/DokidokiDeGachaMachine1",
+    "create-local": "graph create --node http://localhost:8020/ KirienzoEth/DokidokiDeGachaMachine1",
+    "remove-local": "graph remove --node http://localhost:8020/ KirienzoEth/DokidokiDeGachaMachine1",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 KirienzoEth/DokidokiDeGachaMachine1"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.19.0",
