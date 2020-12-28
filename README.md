@@ -1,14 +1,16 @@
-Subgraph dokidoki-degacha-machine1-subgraph created in dokidoki-degacha-machine1-subgraph
+Subgraph for the first machine of the DokiDoki DeGacha project
+
+Visit https://degacha.com/introduce/gacha for more information
 
 Next steps:
 
   1. Type `cd dokidoki-degacha-machine1-subgraph` to enter the subgraph.
 
-  2. graph deploy --access-token b5eb19e5a5ae4582b169f4ad44986646 \
+  2. graph deploy --access-token YOUR_ACCESS_TOKEN \
     --debug \
     --node https://api.thegraph.com/deploy/ \
     --ipfs https://api.thegraph.com/ipfs/ \
-    KirienzoEth/dokidoki-gacha-machine1-subgraph
+    kirienzoeth/dokidoki-degacha-machine1
 
 Subgraph endpoints:
 Queries (HTTP):     http://localhost:8000/subgraphs/name/KirienzoEth/DokidokiDeGachaMachine1
