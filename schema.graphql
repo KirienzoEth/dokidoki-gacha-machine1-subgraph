@@ -1,9 +1,35 @@
-type RunMachineSuccessfully @entity {
-  id: ID! # txn hash
-  blockNumber: BigInt!
+type MachineRun @entity {
+  id: ID! # txn hash + log index
+  machineAddress: Bytes!
+  playTimes: BigInt!
+  player: Player!
+  priceOnRun: BigInt!
   timestamp: BigInt!
-  times: BigInt!
-  player: Bytes!
-  priceOnRun: BigInt
-  amountSpent: BigInt
+  transaction: Transaction!
+  transfers: [Transfer!]! @derivedFrom(field: "machineRun")
+}
+
+type Transaction @entity {
+  id: ID! # txn hash
+  transfers: [Transfer!]!
+  machineRuns: [MachineRun!]! @derivedFrom(field: "transaction")
+  timestamp: BigInt!
+}
+
+type Transfer @entity {
+  id: ID! # txn hash + log index
+  transaction: Transaction!
+  timestamp: BigInt!
+  "null unless the transfer was spending for playing a machine"
+  machineRun: MachineRun
+  from: Bytes!
+  to: Bytes!
+  value: BigInt!
+  currencyAddress: Bytes!
+  logIndex: BigInt!
+}
+
+type Player @entity {
+  id: ID! # wallet address
+  machineRuns: [MachineRun!]! @derivedFrom(field: "player")
 }

@@ -17,6 +17,7 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - RunMachineSuccessfully
+        - Transfer
       abis:
         - name: GameMachine
           file: ./abis/GameMachine.json
@@ -24,3 +25,24 @@ dataSources:
         - event: RunMachineSuccessfully(address,uint256)
           handler: handleRunMachineSuccessfully
       file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: AzukiToken
+    network: mainnet
+    source:
+      address: "0x910524678C0B1B23FFB9285a81f99C29C11CBaEd"
+      abi: AzukiToken
+      startBlock: 11216238
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+        - Transfer
+      abis:
+        - name: AzukiToken
+          file: ./abis/AzukiToken.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/azuki-token.ts
