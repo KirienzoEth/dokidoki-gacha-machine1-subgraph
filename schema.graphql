@@ -17,7 +17,7 @@ type Transaction @entity {
 }
 
 type Transfer @entity {
-  id: ID! # txn hash + log index
+  id: ID! # block number + tx index + log index
   transaction: Transaction!
   timestamp: BigInt!
   "null unless the transfer was spending for playing a machine"

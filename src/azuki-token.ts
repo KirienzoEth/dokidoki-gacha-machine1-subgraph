@@ -14,7 +14,7 @@ export function handleTransfer(
     transaction.transfers = []
   }
 
-  let transfer = new Transfer(transactionHash + '-' + event.logIndex.toString())
+  let transfer = new Transfer(event.block.number.toString() + '-' + event.transaction.index.toString() + '-' + event.logIndex.toString())
   transfer.from = event.params.from
   transfer.to = event.params.to
   transfer.value = event.params.value
