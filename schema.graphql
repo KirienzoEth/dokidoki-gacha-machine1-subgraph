@@ -1,7 +1,7 @@
 type MachineRun @entity {
   id: ID! # txn hash + log index
-  machineAddress: Bytes!
-  playTimes: BigInt!
+  machine: Machine!
+  playTimes: Int!
   player: Player!
   priceOnRun: BigInt!
   timestamp: BigInt!
@@ -25,11 +25,82 @@ type Transfer @entity {
   from: Bytes!
   to: Bytes!
   value: BigInt!
-  currencyAddress: Bytes!
+  token: Token!
   logIndex: BigInt!
 }
 
 type Player @entity {
   id: ID! # wallet address
   machineRuns: [MachineRun!]! @derivedFrom(field: "player")
+}
+
+type Token @entity {
+  id: ID! # token contract address
+  name: String!
+  symbol: String!
+  decimals: Int!
+  "only for azuki"
+  burnAmount: BigInt!
+}
+
+type Machine @entity {
+  id: ID! # machine address
+  currencyToken: Token!
+  playOncePrice: BigInt!
+  machineRuns: [MachineRun!]! @derivedFrom(field: "machine")
+  machineDayData: [MachineDayData!]! @derivedFrom(field: "machine")
+  machineProfitAddressDayData: [MachineProfitAddressDayData!]! @derivedFrom(field: "machine")
+  profitAddresses: [MachineProfitAddress!]! @derivedFrom(field: "machine")
+  "only for Azuki machines"
+  burnAmount: BigInt!
+}
+
+type ProfitAddress @entity {
+  id: ID! # wallet address + token address
+  walletAddress: Bytes!
+  token: Token!
+  profitAddressDayData: [ProfitAddressDayData!]! @derivedFrom(field: "profitAddress")
+  machineProfitAddressDayData: [MachineProfitAddressDayData!]! @derivedFrom(field: "profitAddress")
+  machines: [MachineProfitAddress!]! @derivedFrom(field: "profitAddress")
+  profitAmount: BigInt!
+}
+
+type MachineProfitAddress @entity {
+  id: ID! # machine ID + profit address ID
+  profitAddress: ProfitAddress!
+  machine: Machine!
+}
+
+type TokenDayData @entity {
+  id: ID! # token address + day start timestamp
+  token: Token!
+  date: BigInt!
+  "only for Azuki"
+  burnAmount: BigInt!
+}
+
+type MachineDayData @entity {
+  id: ID! # machine address + day start timestamp
+  machine: Machine!
+  date: BigInt!
+  playTimes: BigInt!
+  amountSpent: BigInt!
+  profitAmount: BigInt!
+  "only for Azuki machines"
+  burnAmount: BigInt!
+}
+
+type ProfitAddressDayData @entity {
+  id: ID! # day start timestamp + profit address ID
+  profitAddress: ProfitAddress!
+  date: BigInt!
+  profitAmount: BigInt!
+}
+
+type MachineProfitAddressDayData @entity {
+  id: ID! # profit address day data ID + machine address
+  machine: Machine!
+  profitAddress: ProfitAddress!
+  profitAmount: BigInt!
+  date: BigInt!
 }

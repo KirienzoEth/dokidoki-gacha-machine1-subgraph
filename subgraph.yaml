@@ -24,7 +24,7 @@ dataSources:
       eventHandlers:
         - event: RunMachineSuccessfully(address,uint256)
           handler: handleRunMachineSuccessfully
-      file: ./src/mapping.ts
+      file: ./src/game-machine.ts
   - kind: ethereum/contract
     name: AzukiToken
     network: mainnet
