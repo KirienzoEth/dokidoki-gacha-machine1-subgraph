@@ -104,11 +104,10 @@ export function handleRunMachineSuccessfully(
           }
           profitAddressDayData.profitAmount = profitAddressDayData.profitAmount.plus(transfer.value)
     
-          let machineProfitAddressDayData = MachineProfitAddressDayData.load(gameMachine.id + '-' + dayId.toString() + '-' + profitAddress.id)
+          let machineProfitAddressDayData = MachineProfitAddressDayData.load(dayId.toString() + '-' + machineProfitAddress.id)
           if (machineProfitAddressDayData == null) {
-            machineProfitAddressDayData = new MachineProfitAddressDayData(gameMachine.id + '-' + dayId.toString() + '-' + profitAddress.id)
-            machineProfitAddressDayData.machine = gameMachine.id
-            machineProfitAddressDayData.profitAddress = profitAddress.id
+            machineProfitAddressDayData = new MachineProfitAddressDayData(dayId.toString() + '-' + machineProfitAddress.id)
+            machineProfitAddressDayData.machineProfitAddress = machineProfitAddress.id
             machineProfitAddressDayData.date = BigInt.fromI32(dayId)
             machineProfitAddressDayData.profitAmount = BigInt.fromI32(0)
           }

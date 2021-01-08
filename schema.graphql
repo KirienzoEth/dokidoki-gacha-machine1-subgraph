@@ -49,7 +49,6 @@ type Machine @entity {
   playOncePrice: BigInt!
   machineRuns: [MachineRun!]! @derivedFrom(field: "machine")
   machineDayData: [MachineDayData!]! @derivedFrom(field: "machine")
-  machineProfitAddressDayData: [MachineProfitAddressDayData!]! @derivedFrom(field: "machine")
   profitAddresses: [MachineProfitAddress!]! @derivedFrom(field: "machine")
   "only for Azuki machines"
   burnAmount: BigInt!
@@ -60,7 +59,6 @@ type ProfitAddress @entity {
   walletAddress: Bytes!
   token: Token!
   profitAddressDayData: [ProfitAddressDayData!]! @derivedFrom(field: "profitAddress")
-  machineProfitAddressDayData: [MachineProfitAddressDayData!]! @derivedFrom(field: "profitAddress")
   machines: [MachineProfitAddress!]! @derivedFrom(field: "profitAddress")
   profitAmount: BigInt!
 }
@@ -69,10 +67,11 @@ type MachineProfitAddress @entity {
   id: ID! # machine ID + profit address ID
   profitAddress: ProfitAddress!
   machine: Machine!
+  machineProfitAddressDayData: [MachineProfitAddressDayData!]! @derivedFrom(field: "machineProfitAddress")
 }
 
 type TokenDayData @entity {
-  id: ID! # token address + day start timestamp
+  id: ID! # day start timestamp + token address
   token: Token!
   date: BigInt!
   "only for Azuki"
@@ -80,7 +79,7 @@ type TokenDayData @entity {
 }
 
 type MachineDayData @entity {
-  id: ID! # machine address + day start timestamp
+  id: ID! # day start timestamp + machine address
   machine: Machine!
   date: BigInt!
   playTimes: BigInt!
@@ -98,9 +97,8 @@ type ProfitAddressDayData @entity {
 }
 
 type MachineProfitAddressDayData @entity {
-  id: ID! # profit address day data ID + machine address
-  machine: Machine!
-  profitAddress: ProfitAddress!
+  id: ID! # day start timestamp + machine profit address ID
+  machineProfitAddress: MachineProfitAddress!
   profitAmount: BigInt!
   date: BigInt!
 }
