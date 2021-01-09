@@ -21,14 +21,16 @@ export function handleTransfer(
   }
 
   let token = Token.load(event.address.toHexString())
+  let tokenBinding = AzukiToken.bind(event.address)
   if (token == null) {
-    let tokenBinding = AzukiToken.bind(event.address)
     token = new Token(event.address.toHexString())
     token.name = tokenBinding.name()
     token.symbol = tokenBinding.symbol()
     token.decimals = tokenBinding.decimals()
     token.burnAmount = BigInt.fromI32(0)
   }
+
+  token.currentSupply = tokenBinding.totalSupply()
 
   let transfer = new Transfer(event.block.number.toString() + '-' + event.transaction.index.toString() + '-' + event.logIndex.toString())
   transfer.from = event.params.from

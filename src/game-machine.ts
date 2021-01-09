@@ -16,10 +16,14 @@ export function handleRunMachineSuccessfully(
   dayId = dayId * 86400
   if (gameMachine == null) {
     gameMachine = new Machine(event.address.toHexString())
+    gameMachine.createdDate = event.block.timestamp
     gameMachine.playOncePrice = machineBinding.playOncePrice()
     gameMachine.currencyToken = machineBinding.currencyToken().toHexString()
     gameMachine.burnAmount = BigInt.fromI32(0)
   }
+
+  gameMachine.title = machineBinding.machineTitle()
+  gameMachine.description = machineBinding.machineDescription()
 
   let machineDayData = MachineDayData.load(dayId.toString() + '-' + gameMachine.id)
   if (machineDayData == null) {
