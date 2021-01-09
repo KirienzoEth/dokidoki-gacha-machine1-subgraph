@@ -41,6 +41,7 @@ type Token @entity {
   decimals: Int!
   "only for azuki"
   burnAmount: BigInt!
+  tokenDayData: [TokenDayData!]! @derivedFrom(field: "token")
 }
 
 type Machine @entity {
