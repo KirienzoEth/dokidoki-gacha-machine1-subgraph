@@ -52,6 +52,7 @@ type Machine @entity {
   title: String
   currencyToken: Token!
   playOncePrice: BigInt!
+  playTimes: BigInt!
   machineRuns: [MachineRun!]! @derivedFrom(field: "machine")
   machineDayData: [MachineDayData!]! @derivedFrom(field: "machine")
   profitAddresses: [MachineProfitAddress!]! @derivedFrom(field: "machine")

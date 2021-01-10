@@ -20,6 +20,7 @@ export function handleRunMachineSuccessfully(
     gameMachine.playOncePrice = machineBinding.playOncePrice()
     gameMachine.currencyToken = machineBinding.currencyToken().toHexString()
     gameMachine.burnAmount = BigInt.fromI32(0)
+    gameMachine.playTimes = BigInt.fromI32(0)
   }
 
   gameMachine.title = machineBinding.machineTitle()
@@ -36,6 +37,7 @@ export function handleRunMachineSuccessfully(
     machineDayData.burnAmount = BigInt.fromI32(0)
   }
   machineDayData.playTimes = machineDayData.playTimes.plus(event.params.times)
+  gameMachine.playTimes = gameMachine.playTimes.plus(event.params.times)
 
   if (machineBinding.playOncePrice() != gameMachine.playOncePrice) {
     gameMachine.playOncePrice = machineBinding.playOncePrice()
