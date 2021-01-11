@@ -21,6 +21,8 @@ export function handleRunMachineSuccessfully(
     gameMachine.currencyToken = machineBinding.currencyToken().toHexString()
     gameMachine.burnAmount = BigInt.fromI32(0)
     gameMachine.playTimes = BigInt.fromI32(0)
+    gameMachine.amountSpent = BigInt.fromI32(0)
+    gameMachine.profitAmount = BigInt.fromI32(0)
   }
 
   gameMachine.title = machineBinding.machineTitle()
@@ -120,6 +122,8 @@ export function handleRunMachineSuccessfully(
           machineProfitAddressDayData.profitAmount = machineProfitAddressDayData.profitAmount.plus(transfer.value)
 
           machineDayData.profitAmount = machineDayData.profitAmount.plus(transfer.value)
+          gameMachine.amountSpent = gameMachine.amountSpent.plus(transfer.value)
+          gameMachine.profitAmount = gameMachine.profitAmount.plus(transfer.value)
     
           profitAddress.save()
           machineProfitAddress.save()
@@ -131,6 +135,7 @@ export function handleRunMachineSuccessfully(
 
     if (transfer.to.toHexString() == event.address.toHexString()) {
       gameMachine.burnAmount = gameMachine.burnAmount.plus(transfer.value)
+      gameMachine.amountSpent = gameMachine.amountSpent.plus(transfer.value)
       machineDayData.burnAmount = machineDayData.burnAmount.plus(transfer.value)
     }
   }
