@@ -3,7 +3,18 @@ import {
   GameMachine,
   RunMachineSuccessfully as RunMachineSuccessfullyEvent,
 } from "../generated/GameMachine/GameMachine"
-import { MachineRun, Player, Transfer, Transaction, Machine, ProfitAddress, MachineProfitAddress, ProfitAddressDayData, MachineProfitAddressDayData, MachineDayData } from "../generated/schema"
+import {
+  AddCardMinted as AddCardMintedEvent,
+  AddCardNotMinted as AddCardNotMintedEvent,
+  LockMachine as LockMachineEvent,
+} from "../generated/GameMachine/GameMachine"
+import {
+  Collection as CollectionTemplate,
+} from "../generated/templates"
+import {
+  Collection as CollectionBinding,
+} from "../generated/templates/Collection/Collection"
+import { MachineRun, Player, Transfer, Transaction, Machine, ProfitAddress, MachineProfitAddress, ProfitAddressDayData, MachineProfitAddressDayData, MachineDayData, Nft, MachineNft, Collection } from "../generated/schema"
 
 const BURN_ADDRESS = "0x0000000000000000000000000000000000000000"
 
@@ -14,22 +25,13 @@ export function handleRunMachineSuccessfully(
   let gameMachine = Machine.load(event.address.toHexString())
   let dayId = event.block.timestamp.toI32() / 86400
   dayId = dayId * 86400
-  if (gameMachine == null) {
-    gameMachine = new Machine(event.address.toHexString())
-    gameMachine.createdDate = event.block.timestamp
-    gameMachine.playOncePrice = machineBinding.playOncePrice()
-    gameMachine.currencyToken = machineBinding.currencyToken().toHexString()
-    gameMachine.burnAmount = BigInt.fromI32(0)
-    gameMachine.playTimes = BigInt.fromI32(0)
-    gameMachine.amountSpent = BigInt.fromI32(0)
-    gameMachine.profitAmount = BigInt.fromI32(0)
-  }
 
   gameMachine.title = machineBinding.machineTitle()
   gameMachine.description = machineBinding.machineDescription()
+  gameMachine.playOncePrice = machineBinding.playOncePrice()
 
   let machineDayData = MachineDayData.load(dayId.toString() + '-' + gameMachine.id)
-  if (machineDayData == null) {
+  if (machineDayData === null) {
     machineDayData = new MachineDayData(dayId.toString() + '-' + gameMachine.id)
     machineDayData.machine = gameMachine.id
     machineDayData.date = BigInt.fromI32(dayId)
@@ -41,16 +43,12 @@ export function handleRunMachineSuccessfully(
   machineDayData.playTimes = machineDayData.playTimes.plus(event.params.times)
   gameMachine.playTimes = gameMachine.playTimes.plus(event.params.times)
 
-  if (machineBinding.playOncePrice() != gameMachine.playOncePrice) {
-    gameMachine.playOncePrice = machineBinding.playOncePrice()
-  }
-
   let playerAddress = event.params.account.toHex()
   let transactionHash = event.transaction.hash.toHex()
 
   // transaction should never be null, it would mean no token transfer before the run
   let player = Player.load(playerAddress)
-  if (player == null) {
+  if (player === null) {
     player = new Player(playerAddress)
     player.save()
   }
@@ -88,7 +86,7 @@ export function handleRunMachineSuccessfully(
 
         if (transfer.to.toHexString() != event.address.toHexString()) {
           let profitAddress = ProfitAddress.load(transfer.to.toHexString() + '-' + machineBinding.currencyToken().toHexString())
-          if (profitAddress == null) {
+          if (profitAddress === null) {
             profitAddress = new ProfitAddress(transfer.to.toHexString() + '-' + machineBinding.currencyToken().toHexString())
             profitAddress.token = machineBinding.currencyToken().toHexString()
             profitAddress.walletAddress = transfer.to
@@ -97,14 +95,14 @@ export function handleRunMachineSuccessfully(
           profitAddress.profitAmount = profitAddress.profitAmount.plus(transfer.value)
     
           let machineProfitAddress = MachineProfitAddress.load(gameMachine.id + '-' + profitAddress.id)
-          if (machineProfitAddress == null) {
+          if (machineProfitAddress === null) {
             machineProfitAddress = new MachineProfitAddress(gameMachine.id + '-' + profitAddress.id)
             machineProfitAddress.machine = gameMachine.id
             machineProfitAddress.profitAddress = profitAddress.id
           }
 
           let profitAddressDayData = ProfitAddressDayData.load(dayId.toString() + '-' + profitAddress.id)
-          if (profitAddressDayData == null) {
+          if (profitAddressDayData === null) {
             profitAddressDayData = new ProfitAddressDayData(dayId.toString() + '-' + profitAddress.id)
             profitAddressDayData.profitAddress = profitAddress.id
             profitAddressDayData.date = BigInt.fromI32(dayId)
@@ -113,7 +111,7 @@ export function handleRunMachineSuccessfully(
           profitAddressDayData.profitAmount = profitAddressDayData.profitAmount.plus(transfer.value)
     
           let machineProfitAddressDayData = MachineProfitAddressDayData.load(dayId.toString() + '-' + machineProfitAddress.id)
-          if (machineProfitAddressDayData == null) {
+          if (machineProfitAddressDayData === null) {
             machineProfitAddressDayData = new MachineProfitAddressDayData(dayId.toString() + '-' + machineProfitAddress.id)
             machineProfitAddressDayData.machineProfitAddress = machineProfitAddress.id
             machineProfitAddressDayData.date = BigInt.fromI32(dayId)
@@ -143,4 +141,119 @@ export function handleRunMachineSuccessfully(
   gameMachine.save()
   machineDayData.save()
   run.save();
+}
+
+export function handleAddCardMinted(event: AddCardMintedEvent): void {
+  let machineBinding = GameMachine.bind(event.address)
+  let gameMachine = Machine.load(event.address.toHexString())
+  if (gameMachine === null) {
+    gameMachine = new Machine(event.address.toHexString())
+    gameMachine.createdDate = event.block.timestamp
+    gameMachine.playOncePrice = machineBinding.playOncePrice()
+    gameMachine.currencyToken = machineBinding.currencyToken().toHexString()
+    gameMachine.burnAmount = BigInt.fromI32(0)
+    gameMachine.playTimes = BigInt.fromI32(0)
+    gameMachine.amountSpent = BigInt.fromI32(0)
+    gameMachine.profitAmount = BigInt.fromI32(0)
+    gameMachine.locked = true
+    gameMachine.save()
+  }
+
+  let momijiTokenAddress = machineBinding.momijiToken()
+  let collectionBinding = CollectionBinding.bind(momijiTokenAddress)
+
+  let collection = Collection.load(momijiTokenAddress.toHexString())
+  if (collection === null) {
+    collection = new Collection(momijiTokenAddress.toHexString()) as Collection
+  
+    // Create the tracked contract based on the template to track machine minting
+    CollectionTemplate.create(momijiTokenAddress)
+    collection.name = collectionBinding.name()
+    collection.save()
+  }
+
+  let nft = Nft.load(momijiTokenAddress.toHexString() + '-' + event.params.cardId.toString())
+  if (nft === null) {
+    nft = new Nft(momijiTokenAddress.toHexString() + '-' + event.params.cardId.toString())
+    nft.collection = collection.id
+    nft.maxAmount = collectionBinding.tokenMaxQuantityWithId(event.params.cardId)
+    nft.uri = collectionBinding.uri(event.params.cardId)
+    nft.save()
+  }
+
+  let machineNft = MachineNft.load(gameMachine.id + '-' + nft.id)
+  if (machineNft === null) {
+    machineNft = new MachineNft(gameMachine.id + '-' + nft.id)
+    machineNft.machine = gameMachine.id
+    machineNft.nft = nft.id
+    machineNft.maxAmount = BigInt.fromI32(0)
+    machineNft.currentAmount = BigInt.fromI32(0)
+  }
+
+  machineNft.maxAmount = machineNft.maxAmount.plus(event.params.amount)
+  machineNft.currentAmount = machineNft.currentAmount.plus(event.params.amount)
+  machineNft.save()
+}
+
+export function handleAddCardNotMinted(event: AddCardNotMintedEvent): void {
+  let machineBinding = GameMachine.bind(event.address)
+  let gameMachine = Machine.load(event.address.toHexString())
+  if (gameMachine === null) {
+    gameMachine = new Machine(event.address.toHexString())
+    gameMachine.createdDate = event.block.timestamp
+    gameMachine.playOncePrice = machineBinding.playOncePrice()
+    gameMachine.currencyToken = machineBinding.currencyToken().toHexString()
+    gameMachine.burnAmount = BigInt.fromI32(0)
+    gameMachine.playTimes = BigInt.fromI32(0)
+    gameMachine.amountSpent = BigInt.fromI32(0)
+    gameMachine.profitAmount = BigInt.fromI32(0)
+    gameMachine.locked = true
+    gameMachine.save()
+  }
+
+  let momijiTokenAddress = machineBinding.momijiToken()
+  let collectionBinding = CollectionBinding.bind(momijiTokenAddress)
+
+  let collection = Collection.load(momijiTokenAddress.toHexString())
+  if (collection === null) {
+    collection = new Collection(momijiTokenAddress.toHexString())
+  
+    // Create the tracked contract based on the template to track machine minting
+    CollectionTemplate.create(momijiTokenAddress)
+    collection.name = collectionBinding.name()
+    collection.save()
+  }
+
+  let nft = Nft.load(momijiTokenAddress.toHexString() + '-' + event.params.cardId.toString())
+  if (nft === null) {
+    nft = new Nft(momijiTokenAddress.toHexString() + '-' + event.params.cardId.toString())
+    nft.collection = collection.id
+    nft.maxAmount = collectionBinding.tokenMaxQuantityWithId(event.params.cardId)
+    nft.uri = collectionBinding.uri(event.params.cardId)
+    nft.save()
+  }
+
+  let machineNft = MachineNft.load(gameMachine.id + '-' + nft.id)
+  if (machineNft === null) {
+    machineNft = new MachineNft(gameMachine.id + '-' + nft.id)
+    machineNft.machine = gameMachine.id
+    machineNft.nft = nft.id
+    machineNft.maxAmount = BigInt.fromI32(0)
+    machineNft.currentAmount = BigInt.fromI32(0)
+  }
+
+  machineNft.maxAmount = machineNft.maxAmount.plus(event.params.amount)
+  machineNft.currentAmount = machineNft.currentAmount.plus(event.params.amount)
+  machineNft.save()
+}
+
+export function handleLockMachine(event: LockMachineEvent): void {
+  let gameMachine = Machine.load(event.address.toHexString())
+  // if game machine doesn't exist, that means, there is no cards in it, so we don't care for it
+  if (gameMachine === null) {
+    return;
+  }
+
+  gameMachine.locked = event.params.locked
+  gameMachine.save()
 }

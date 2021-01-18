@@ -16,12 +16,30 @@ dataSources:
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
-        - RunMachineSuccessfully
+        - Machine
+        - MachineRun
+        - Transaction
+        - Player
         - Transfer
+        - ProfitAddress
+        - MachineProfitAddress
+        - MachineDayData
+        - ProfitAddressDayData
+        - MachineProfitAddressDayData
+        - Collection
+        - Nft
       abis:
         - name: GameMachine
           file: ./abis/GameMachine.json
+        - name: Collection
+          file: ./abis/Collection.json
       eventHandlers:
+        - event: AddCardMinted(uint256,uint256,uint256)
+          handler: handleAddCardMinted
+        - event: AddCardNotMinted(uint256,uint256,uint256)
+          handler: handleAddCardNotMinted
+        - event: LockMachine(bool)
+          handler: handleLockMachine
         - event: RunMachineSuccessfully(address,uint256)
           handler: handleRunMachineSuccessfully
       file: ./src/game-machine.ts
@@ -39,6 +57,8 @@ dataSources:
       entities:
         - Transaction
         - Transfer
+        - Token
+        - TokenDayData
       abis:
         - name: AzukiToken
           file: ./abis/AzukiToken.json
@@ -46,3 +66,24 @@ dataSources:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
       file: ./src/azuki-token.ts
+templates:
+  - kind: ethereum/contract # a bit of cheating here as the collection was not created dynamically, but we're only aware of its existence when it's loaded in a machine
+    name: Collection
+    network: mainnet
+    source:
+      abi: Collection
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/collection.ts
+      entities:
+        - Machine
+        - Collection
+        - Nft
+      abis:
+        - name: Collection
+          file: ./abis/Collection.json
+      eventHandlers:
+        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleTransferSingle

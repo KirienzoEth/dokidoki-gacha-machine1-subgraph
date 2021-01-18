@@ -50,16 +50,40 @@ type Machine @entity {
   createdDate: BigInt!
   description: String
   title: String
+  locked: Boolean!
   currencyToken: Token!
   playOncePrice: BigInt!
   machineRuns: [MachineRun!]! @derivedFrom(field: "machine")
   machineDayData: [MachineDayData!]! @derivedFrom(field: "machine")
   profitAddresses: [MachineProfitAddress!]! @derivedFrom(field: "machine")
+  machineNfts: [MachineNft!]! @derivedFrom(field: "machine")
   playTimes: BigInt!
   amountSpent: BigInt!
   profitAmount: BigInt!
   "only for Azuki machines"
   burnAmount: BigInt!
+}
+
+type Collection @entity {
+  id: ID! # contract address
+  name: String!
+  nfts: [Nft!]! @derivedFrom(field: "collection")
+}
+
+type Nft @entity {
+  id: ID! # collection ID + token ID
+  uri: String!
+  maxAmount: BigInt!
+  collection: Collection!
+  machineNfts: [MachineNft!]! @derivedFrom(field: "nft")
+}
+
+type MachineNft @entity {
+  id: ID! # machine ID + Nft ID
+  maxAmount: BigInt!
+  currentAmount: BigInt!
+  machine: Machine!
+  nft: Nft!
 }
 
 type ProfitAddress @entity {
