@@ -1,12 +1,11 @@
 type MachineRun @entity {
   id: ID! # txn hash + log index
   machine: Machine!
-  playTimes: Int!
+  playTimes: BigInt!
   player: Player!
   priceOnRun: BigInt!
   timestamp: BigInt!
   transaction: Transaction!
-  transfers: [Transfer!]! @derivedFrom(field: "machineRun")
 }
 
 type Transaction @entity {
@@ -41,7 +40,7 @@ type Token @entity {
   decimals: Int!
   currentSupply: BigInt!
   "only for azuki"
-  burnAmount: BigInt!
+  burnAmount: BigInt
   tokenDayData: [TokenDayData!]! @derivedFrom(field: "token")
 }
 
@@ -51,7 +50,6 @@ type Machine @entity {
   description: String
   title: String
   locked: Boolean!
-  currencyToken: Token!
   playOncePrice: BigInt!
   machineRuns: [MachineRun!]! @derivedFrom(field: "machine")
   machineDayData: [MachineDayData!]! @derivedFrom(field: "machine")
@@ -60,8 +58,12 @@ type Machine @entity {
   playTimes: BigInt!
   amountSpent: BigInt!
   profitAmount: BigInt!
+  "if null, it's an ETH machine"
+  currencyToken: Token
   "only for Azuki machines"
-  burnAmount: BigInt!
+  burnAmount: BigInt
+  "only for ETH machines"
+  buybackAmount: BigInt
 }
 
 type Collection @entity {
@@ -100,6 +102,7 @@ type MachineProfitAddress @entity {
   profitAddress: ProfitAddress!
   machine: Machine!
   machineProfitAddressDayData: [MachineProfitAddressDayData!]! @derivedFrom(field: "machineProfitAddress")
+  profitAmount: BigInt!
 }
 
 type TokenDayData @entity {
@@ -107,7 +110,7 @@ type TokenDayData @entity {
   token: Token!
   date: BigInt!
   "only for Azuki"
-  burnAmount: BigInt!
+  burnAmount: BigInt
 }
 
 type MachineDayData @entity {
@@ -118,7 +121,9 @@ type MachineDayData @entity {
   amountSpent: BigInt!
   profitAmount: BigInt!
   "only for Azuki machines"
-  burnAmount: BigInt!
+  burnAmount: BigInt
+  "only for ETH machines"
+  buybackAmount: BigInt
 }
 
 type ProfitAddressDayData @entity {

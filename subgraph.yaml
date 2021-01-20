@@ -5,7 +5,7 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: GameMachine
+    name: GameMachine1
     network: mainnet
     source:
       address: "0x89fd25dc5ea7a7f9a05c429a636831cb48d91f4c"
@@ -30,7 +30,7 @@ dataSources:
         - Nft
       abis:
         - name: GameMachine
-          file: ./abis/GameMachine.json
+          file: ./abis/GameMachine1.json
         - name: Collection
           file: ./abis/Collection.json
       eventHandlers:
