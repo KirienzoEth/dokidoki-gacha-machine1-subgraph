@@ -38,7 +38,7 @@ type Token @entity {
   name: String!
   symbol: String!
   decimals: Int!
-  currentSupply: BigInt!
+  currentSupply: BigInt
   "only for azuki"
   burnAmount: BigInt
   tokenDayData: [TokenDayData!]! @derivedFrom(field: "token")
@@ -58,7 +58,6 @@ type Machine @entity {
   playTimes: BigInt!
   amountSpent: BigInt!
   profitAmount: BigInt!
-  "if null, it's an ETH machine"
   currencyToken: Token
   "only for Azuki machines"
   burnAmount: BigInt

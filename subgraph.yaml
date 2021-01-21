@@ -44,6 +44,45 @@ dataSources:
           handler: handleRunMachineSuccessfully
       file: ./src/game-machine.ts
   - kind: ethereum/contract
+    name: GameMachine3
+    network: mainnet
+    source:
+      address: "0x06fd2e9748da0b865b24d069c5194d9edc1b2fda"
+      abi: GameMachine
+      startBlock: 11664792
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Machine
+        - MachineRun
+        - Transaction
+        - Player
+        - Transfer
+        - ProfitAddress
+        - MachineProfitAddress
+        - MachineDayData
+        - ProfitAddressDayData
+        - MachineProfitAddressDayData
+        - Collection
+        - Nft
+      abis:
+        - name: GameMachine
+          file: ./abis/EthGameMachine.json
+        - name: Collection
+          file: ./abis/Collection.json
+      eventHandlers:
+        - event: AddCardMinted(uint256,uint256,uint256)
+          handler: handleAddCardMinted
+        - event: AddCardNotMinted(uint256,uint256,uint256)
+          handler: handleAddCardNotMinted
+        - event: LockMachine(bool)
+          handler: handleLockMachine
+        - event: RunMachineSuccessfully(address,uint256,uint256)
+          handler: handleRunMachineSuccessfully
+      file: ./src/eth-game-machine.ts
+  - kind: ethereum/contract
     name: AzukiToken
     network: mainnet
     source:

@@ -26,7 +26,6 @@ export function handleRunMachineSuccessfully(
   let machineDayData = MachineDayData.load(dayId.toString() + '-' + gameMachine.id)
   if (machineDayData === null) {
     machineDayData = initializeMachineDayData(dayId, gameMachine.id)
-    machineDayData.burnAmount = BigInt.fromI32(0)
   }
 
   machineDayData.playTimes = machineDayData.playTimes.plus(event.params.times)
@@ -92,7 +91,7 @@ export function handleRunMachineSuccessfully(
 
   gameMachine.save()
   machineDayData.save()
-  run.save();
+  run.save()
 }
 
 export function handleAddCardMinted(event: AddCardMintedEvent): void {

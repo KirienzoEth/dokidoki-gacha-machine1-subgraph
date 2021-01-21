@@ -28,6 +28,13 @@ export function handleTransfer(
     token.symbol = tokenBinding.symbol()
     token.decimals = tokenBinding.decimals()
     token.burnAmount = BigInt.fromI32(0)
+
+    // some cheating here too as we will not track all ETH transfers
+    let eth = new Token('eth')
+    eth.name = 'Ethereum'
+    eth.symbol = 'ETH'
+    eth.decimals = 18
+    eth.save()
   }
 
   token.currentSupply = tokenBinding.totalSupply()

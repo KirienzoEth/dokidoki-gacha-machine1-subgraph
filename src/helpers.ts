@@ -33,7 +33,6 @@ export function initializeMachine(
   gameMachine.createdDate = timestamp
   gameMachine.playOncePrice = playOncePrice
   gameMachine.currencyToken = currencyTokenAddress
-  gameMachine.burnAmount = BigInt.fromI32(0)
   gameMachine.playTimes = BigInt.fromI32(0)
   gameMachine.amountSpent = BigInt.fromI32(0)
   gameMachine.profitAmount = BigInt.fromI32(0)
