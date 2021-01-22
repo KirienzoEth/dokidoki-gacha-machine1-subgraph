@@ -5,7 +5,7 @@ import {
   AddCardMinted as AddCardMintedEvent,
   AddCardNotMinted as AddCardNotMintedEvent,
   LockMachine as LockMachineEvent,
-} from "../generated/GameMachine3/GameMachine"
+} from "../generated/GameMachine2/GameMachine"
 import { Machine, MachineDayData } from "../generated/schema"
 import { initializeMachine, createMachineRun, initializeMachineDayData, handleAddNftToMachine, changeMachineLockStatus, getProfitAddress, getMachineProfitAddress, getProfitAddressDayData, getMachineProfitAddressDayData } from './helpers'
 
@@ -38,11 +38,11 @@ export function handleRunMachineSuccessfully(
   let run = createMachineRun(event.logIndex, transactionHash, event.address.toHexString(), event.params.times, event.block.timestamp, machineBinding.playOncePrice(), event.params.account.toHexString())
 
   let toArtist = machineBinding.forArtistRate().times(machineBinding.playOncePrice()).div(BigInt.fromI32(100)).times(event.params.times)
-  let toBuyback = machineBinding.forDokiBuybackRate().times(machineBinding.playOncePrice()).div(BigInt.fromI32(100)).times(event.params.times)
+  let toBurn = machineBinding.currencyBurnRate().times(machineBinding.playOncePrice()).div(BigInt.fromI32(100)).times(event.params.times)
   // TODO add to tracking, consider as profit address but not as profit amount ? Tag profit address as "dev" ?
-  let toDev = machineBinding.playOncePrice().minus(toArtist).minus(toBuyback).times(event.params.times)
+  let toDev = machineBinding.playOncePrice().minus(toArtist).minus(toBurn).times(event.params.times)
 
-  let profitAddress = getProfitAddress(machineBinding.artistAccount(), 'eth')
+  let profitAddress = getProfitAddress(machineBinding.owner(), 'eth')
   profitAddress.profitAmount = profitAddress.profitAmount.plus(toArtist)
 
   let machineProfitAddress = getMachineProfitAddress(gameMachine.id, profitAddress.id)
@@ -56,10 +56,10 @@ export function handleRunMachineSuccessfully(
 
   machineDayData.amountSpent = machineDayData.amountSpent.plus(machineBinding.playOncePrice().times(event.params.times))
   machineDayData.profitAmount = machineDayData.profitAmount.plus(toArtist)
-  machineDayData.buybackAmount = machineDayData.buybackAmount.plus(toBuyback)
+  machineDayData.burnAmount = machineDayData.burnAmount.plus(toBurn)
   gameMachine.amountSpent = gameMachine.amountSpent.plus(machineBinding.playOncePrice().times(event.params.times))
   gameMachine.profitAmount = gameMachine.profitAmount.plus(toArtist)
-  gameMachine.buybackAmount = gameMachine.buybackAmount.plus(toBuyback)
+  gameMachine.burnAmount = gameMachine.burnAmount.plus(toBurn)
 
   profitAddress.save()
   machineProfitAddress.save()
@@ -74,7 +74,7 @@ export function handleAddCardMinted(event: AddCardMintedEvent): void {
   let machineBinding = GameMachine.bind(event.address)
   let gameMachine = Machine.load(event.address.toHexString())
   if (gameMachine === null) {
-    gameMachine = initializeMachine(event.address.toHexString(), event.block.timestamp, machineBinding.playOncePrice(), 'eth')
+    gameMachine = initializeMachine(event.address.toHexString(), event.block.timestamp, machineBinding.playOncePrice(), machineBinding.currencyToken().toHexString())
   }
 
   let momijiTokenAddress = machineBinding.momijiToken()
@@ -86,7 +86,7 @@ export function handleAddCardNotMinted(event: AddCardNotMintedEvent): void {
   let machineBinding = GameMachine.bind(event.address)
   let gameMachine = Machine.load(event.address.toHexString())
   if (gameMachine === null) {
-    gameMachine = initializeMachine(event.address.toHexString(), event.block.timestamp, machineBinding.playOncePrice(), 'eth')
+    gameMachine = initializeMachine(event.address.toHexString(), event.block.timestamp, machineBinding.playOncePrice(), machineBinding.currencyToken().toHexString())
   }
 
   let momijiTokenAddress = machineBinding.momijiToken()

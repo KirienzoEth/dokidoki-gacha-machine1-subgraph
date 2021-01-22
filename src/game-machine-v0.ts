@@ -23,6 +23,10 @@ export function handleRunMachineSuccessfully(
   gameMachine.description = machineBinding.machineDescription()
   gameMachine.playOncePrice = machineBinding.playOncePrice()
 
+  if (gameMachine.createdDate === null) {
+    gameMachine.createdDate = event.block.timestamp
+  }
+
   let machineDayData = MachineDayData.load(dayId.toString() + '-' + gameMachine.id)
   if (machineDayData === null) {
     machineDayData = initializeMachineDayData(dayId, gameMachine.id)

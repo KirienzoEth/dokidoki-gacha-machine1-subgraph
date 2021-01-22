@@ -1,5 +1,5 @@
 specVersion: 0.0.2
-description: DokiDoki Degacha machine 1
+description: DokiDoki Degacha
 repository: https://github.com/KirienzoEth/dokidoki-gacha-machine1-subgraph
 schema:
   file: ./schema.graphql
@@ -30,7 +30,7 @@ dataSources:
         - Nft
       abis:
         - name: GameMachine
-          file: ./abis/GameMachine1.json
+          file: ./abis/GameMachineV0.json
         - name: Collection
           file: ./abis/Collection.json
       eventHandlers:
@@ -42,7 +42,46 @@ dataSources:
           handler: handleLockMachine
         - event: RunMachineSuccessfully(address,uint256)
           handler: handleRunMachineSuccessfully
-      file: ./src/game-machine.ts
+      file: ./src/game-machine-v0.ts
+  - kind: ethereum/contract
+    name: GameMachine2
+    network: mainnet
+    source:
+      address: "0x4b2580e47c6AD54e61E0abE6eD4E8f26DAF1527F"
+      abi: GameMachine
+      startBlock: 11664726
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Machine
+        - MachineRun
+        - Transaction
+        - Player
+        - Transfer
+        - ProfitAddress
+        - MachineProfitAddress
+        - MachineDayData
+        - ProfitAddressDayData
+        - MachineProfitAddressDayData
+        - Collection
+        - Nft
+      abis:
+        - name: GameMachine
+          file: ./abis/AzukiGameMachine.json
+        - name: Collection
+          file: ./abis/Collection.json
+      eventHandlers:
+        - event: AddCardMinted(uint256,uint256,uint256)
+          handler: handleAddCardMinted
+        - event: AddCardNotMinted(uint256,uint256,uint256)
+          handler: handleAddCardNotMinted
+        - event: LockMachine(bool)
+          handler: handleLockMachine
+        - event: RunMachineSuccessfully(address,uint256,uint256)
+          handler: handleRunMachineSuccessfully
+      file: ./src/azuki-game-machine.ts
   - kind: ethereum/contract
     name: GameMachine3
     network: mainnet

@@ -46,7 +46,7 @@ type Token @entity {
 
 type Machine @entity {
   id: ID! # machine address
-  createdDate: BigInt!
+  createdDate: BigInt
   description: String
   title: String
   locked: Boolean!
