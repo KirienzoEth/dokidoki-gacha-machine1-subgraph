@@ -46,6 +46,7 @@ type Token @entity {
 
 type Machine @entity {
   id: ID! # machine address
+  indexId: BigInt!
   createdDate: BigInt
   description: String
   title: String

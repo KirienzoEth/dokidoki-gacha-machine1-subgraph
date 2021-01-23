@@ -74,7 +74,7 @@ export function handleAddCardMinted(event: AddCardMintedEvent): void {
   let machineBinding = GameMachine.bind(event.address)
   let gameMachine = Machine.load(event.address.toHexString())
   if (gameMachine === null) {
-    gameMachine = initializeMachine(event.address.toHexString(), event.block.timestamp, machineBinding.playOncePrice(), machineBinding.currencyToken().toHexString())
+    gameMachine = initializeMachine(event.address.toHexString(), machineBinding.machineId(), machineBinding.playOncePrice(), machineBinding.currencyToken().toHexString())
   }
 
   let momijiTokenAddress = machineBinding.momijiToken()

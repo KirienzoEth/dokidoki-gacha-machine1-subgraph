@@ -25,12 +25,12 @@ export function initializeMachineDayData(
 
 export function initializeMachine(
   machineAddress: string,
-  timestamp: BigInt,
+  machineIndexId: BigInt,
   playOncePrice: BigInt,
   currencyTokenAddress: string
 ): Machine {
   let gameMachine = new Machine(machineAddress)
-  gameMachine.createdDate = timestamp
+  gameMachine.indexId = machineIndexId
   gameMachine.playOncePrice = playOncePrice
   gameMachine.currencyToken = currencyTokenAddress
   gameMachine.playTimes = BigInt.fromI32(0)
